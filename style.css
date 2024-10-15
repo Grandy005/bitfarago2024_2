@@ -1,0 +1,134 @@
+.press-start-2p-regular {
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}  
+
+body {
+    margin: 0px;
+    background-color: #91C7B1;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    flex-direction: column;
+}
+
+.gameContainer {
+    display: flex;
+    width: 100vw;
+    height: 100%;
+}
+
+.gridContainer {
+    background-color: #54494B;
+    width: 70%;
+    margin: 2rem 0px 2rem 2rem;
+    padding: 8px;
+}
+
+.parent {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 8px;
+    height: 100%;
+    justify-items: center;
+    align-items: center;
+}
+
+.gridCell {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #91C7B1;
+}
+
+.gridCell:hover {
+    cursor: pointer;
+    opacity: .8;
+}
+
+.controlsContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 30%;
+}
+
+button {
+    width: max-content;
+    padding: 2rem;
+}
+
+.buttonContainer {
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+}
+
+#fruitDisplay, #stepsDisplay {
+    display: none;
+}
+
+/* control grid  */
+.up {
+    grid-column-start: 2;
+}
+
+.down {
+    grid-column-start: 2;
+    grid-row-start: 2;
+}
+
+.right {
+    grid-column-start: 3;
+    grid-row-start: 2;
+}
+
+.left {
+    grid-column-start: 1;
+    grid-row-start: 2;
+}
+
+/* control arrows */
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+}
+  
+.rightArrow {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.leftArrow {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
+
+.upArrow {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.downArrow {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
