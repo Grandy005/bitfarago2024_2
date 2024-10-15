@@ -16,6 +16,11 @@ class gridCell {
     }
 }
 
+// Start of program after DOM load
+document.addEventListener("DOMContentLoaded", () => {
+    entryPoint();
+});
+
 // Remaining steps display
 let stepsDisplay = document.getElementById('stepsDisplay');
 
@@ -75,11 +80,6 @@ function setFirstGameState() {
             new gridCell(cell.row, cell.column, cell.isPlayerCell, cell.numberOfFruits)
         )
     );
-}
-
-// Return the deep copied array
-function getFirstGameState() {
-    return firstGameMatrix;
 }
 
 // Adding event listeners to buttons
@@ -250,8 +250,3 @@ function movePlayerLeft() {
         })
     })
 }
-
-// Start of program after DOM load
-document.addEventListener("DOMContentLoaded", () => {
-    entryPoint();
-});
