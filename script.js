@@ -1,4 +1,4 @@
-//gridCell class
+// GridCell class
 class gridCell {
     constructor(row, column, isPlayerCell, numberOfFruits) {
         this.row = row;
@@ -7,6 +7,7 @@ class gridCell {
         this.numberOfFruits = numberOfFruits;
         this.functionWrapper = null;
     }
+
     createDivElement() {
         const divElement = document.createElement('div');
         divElement.textContent = this.numberOfFruits;
@@ -15,40 +16,103 @@ class gridCell {
     }
 }
 
-//create player
+// Remaining steps display
+let stepsDisplay = document.getElementById('stepsDisplay');
+
+// Total fruits counter
+let totalFruits = 0;
+
+// Fruit display
+let fruitDisplay = document.getElementById('fruitDisplay');
+
+// Sets the number of steps
+const stepsLimit = 10;
+
+// Remaining steps counter
+let remainingSteps = stepsLimit;
+
+// Main entry point of the program
+function entryPoint() {
+    handleEventListeners();
+    generateGameGrid();
+    setFirstGameState();
+}
+
+let selectedStartingCell = null;
+
+// Replays the game from the first state of board
+function replayLevel() {
+    remainingSteps = stepsLimit;
+    totalFruits = 0;
+
+    gameMatrix = firstGameMatrix.map(row =>
+        row.map(cell =>
+            new gridCell(cell.row, cell.column, cell.isPlayerCell, cell.numberOfFruits)
+        )
+    );
+
+    gameMatrix.forEach(x => {
+        x.forEach(currentCell => {
+            if (currentCell.row == selectedStartingCell.row && currentCell.column == selectedStartingCell.column) {
+                currentCell.isPlayerCell = true;
+            } else {
+                currentCell.isPlayerCell = false;
+            }
+        });
+    });
+
+    fruitDisplay.textContent = `Begyűjtött gyümölcsök: ${totalFruits}`;
+    stepsDisplay.textContent = `Hátralévő lépések: ${remainingSteps}`;
+
+    renderGameGrid(gameMatrix);
+}
+
+// Saves the first state of the board
+let firstGameMatrix = [];
+function setFirstGameState() {
+    firstGameMatrix = gameMatrix.map(row =>
+        row.map(cell =>
+            new gridCell(cell.row, cell.column, cell.isPlayerCell, cell.numberOfFruits)
+        )
+    );
+}
+
+// Return the deep copied array
+function getFirstGameState() {
+    return firstGameMatrix;
+}
+
+// Adding event listeners to buttons
+function handleEventListeners() {
+    document.getElementById("buttonUp").addEventListener('click', movePlayerUp);
+    document.getElementById("buttonDown").addEventListener('click', movePlayerDown);
+    document.getElementById("buttonRight").addEventListener('click', movePlayerRight);
+    document.getElementById("buttonLeft").addEventListener('click', movePlayerLeft);
+    document.getElementById("resetButton").addEventListener('click', replayLevel);
+}
+
+// Create player
 function createPlayer() {
     let player = document.createElement('img');
-    player.src = 'https://koenig-media.raywenderlich.com/uploads/2012/06/PixelArtTutorial.png';
+    player.src = '/player.png';
     player.style.width = '50px';
     return player;
 }
 
-//create tick
-function createTick() {
-    let tick = document.createElement('img');
-    tick.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Green_tick.svg/600px-Green_tick.svg.png';
-    tick.style.height = '50px';
-    return tick;
+// Create check mark
+function createCheckMark() {
+    let checkmark = document.createElement('img');
+    checkmark.src = '/checkmark.png';
+    checkmark.style.height = '50px';
+    return checkmark;
 }
 
-//remaining steps counter
-let remainingSteps = 10;
-
-//remaining steps display
-let stepsDisplay = document.getElementById('stepsDisplay');
-
-//total fruits counter
-let totalFruits = 0;
-
-//fruit display
-let fruitDisplay = document.getElementById('fruitDisplay');
-
-//set players starting cell
+// Set players starting cell
 let gameMatrix = [];
 function setStartingCell(cell) {
+    selectedStartingCell = cell;
 
     cell.isPlayerCell = true;
-    console.log(cell);
 
     gameMatrix.flat().forEach(cell => {
         if (cell.functionWrapper) {
@@ -56,11 +120,14 @@ function setStartingCell(cell) {
             cell.divElement.removeEventListener('click', cell.functionWrapper);
         };
     });
+
     document.querySelector('h4').style.display = 'none';
     let player = createPlayer();
     cell.divElement.replaceChild(player, cell.divElement.firstChild);
+
     totalFruits += cell.numberOfFruits;
     cell.numberOfFruits = 0;
+
     fruitDisplay.style.display = 'unset';
     fruitDisplay.textContent = `Begyűjtött gyümölcsök: ${totalFruits}`;
     stepsDisplay.style.display = 'unset';
@@ -68,20 +135,19 @@ function setStartingCell(cell) {
 
     const buttonContainer = document.querySelector('.buttonContainer');
     buttonContainer.style.display = 'grid';
-    console.log(totalFruits);
 }
 
-//generating game matrix
+// Generating game matrix
 function generateGameGrid() {
     const grid = document.querySelector('.parent');
-    
+
     for (let i = 0; i < 8; i++) {
         gameMatrix.push(Array.from(i))
         for (let j = 0; j < 8; j++) {
-            const numberOfFruits = Math.floor(Math.random() * (70 - 10 + 1) ) + 10;
+            const numberOfFruits = Math.floor(Math.random() * (70 - 10 + 1)) + 10;
             const currentCell = new gridCell(i, j, false, numberOfFruits);
             currentCell.createDivElement();
-            
+
             grid.appendChild(currentCell.divElement);
             gameMatrix[i].push(currentCell);
 
@@ -91,27 +157,49 @@ function generateGameGrid() {
     }
 }
 
-//finding the players current cell
+// Renders the matrix
+function renderGameGrid(matrix) {
+    const grid = document.querySelector('.parent');
+    grid.innerHTML = "";
+
+    matrix.forEach(x => {
+        x.forEach(currentCell => {
+            currentCell.createDivElement();
+
+            if (currentCell.isPlayerCell) {
+                let player = createPlayer();
+                currentCell.divElement.replaceChild(player, currentCell.divElement.firstChild);
+            }
+
+            grid.appendChild(currentCell.divElement);
+        });
+    })
+}
+
+// Finding the players current cell
 function findPlayer() {
     return gameMatrix.flat().find(cell => cell.isPlayerCell == true);
 }
 
-//updating cell data
+// Updating cell data
 function updateCells(currentCell, newCell) {
     let player = createPlayer();
-    let tick = createTick();
-    currentCell.divElement.replaceChild(tick, currentCell.divElement.firstChild);
+    let checkmark = createCheckMark();
+
+    currentCell.divElement.replaceChild(checkmark, currentCell.divElement.firstChild);
     currentCell.isPlayerCell = false;
     newCell.isPlayerCell = true;
+
     totalFruits += newCell.numberOfFruits;
-    fruitDisplay.textContent = `Begyűjtött gyümölcsök: ${totalFruits}`; 
+
+    fruitDisplay.textContent = `Begyűjtött gyümölcsök: ${totalFruits}`;
     stepsDisplay.textContent = `Hátralévő lépések: ${remainingSteps}`;
+
     newCell.numberOfFruits = 0;
     newCell.divElement.replaceChild(player, newCell.divElement.firstChild);
-    console.log(totalFruits);
 }
 
-//moving player up
+// Moving player up
 function movePlayerUp() {
     const currentCell = findPlayer();
     gameMatrix.forEach(row => {
@@ -124,7 +212,7 @@ function movePlayerUp() {
     })
 }
 
-//moving player down
+// Noving player down
 function movePlayerDown() {
     const currentCell = findPlayer();
     gameMatrix.forEach(row => {
@@ -137,7 +225,7 @@ function movePlayerDown() {
     })
 }
 
-//moving player right
+// Moving player right
 function movePlayerRight() {
     const currentCell = findPlayer();
     gameMatrix.forEach(row => {
@@ -150,7 +238,7 @@ function movePlayerRight() {
     })
 }
 
-//moving player left
+// Moving player left
 function movePlayerLeft() {
     const currentCell = findPlayer();
     gameMatrix.forEach(row => {
@@ -163,10 +251,5 @@ function movePlayerLeft() {
     })
 }
 
-generateGameGrid();
-
-//adding event listeners to buttons
-document.querySelectorAll('button')[0].addEventListener('click', movePlayerUp);
-document.querySelectorAll('button')[1].addEventListener('click', movePlayerDown);
-document.querySelectorAll('button')[2].addEventListener('click', movePlayerRight);
-document.querySelectorAll('button')[3].addEventListener('click', movePlayerLeft);
+// Start of program
+entryPoint();
