@@ -251,5 +251,7 @@ function movePlayerLeft() {
     })
 }
 
-// Start of program
-entryPoint();
+// Start of program after DOM load
+document.addEventListener("DOMContentLoaded", () => {
+    entryPoint();
+});
