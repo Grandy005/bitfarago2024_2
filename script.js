@@ -38,12 +38,17 @@ let remainingSteps = stepsLimit;
 
 // Main entry point of the program
 function entryPoint() {
-    handleEventListeners();
+    handleEventListeners(false);
     generateGameGrid();
     setFirstGameState();
 }
 
 let selectedStartingCell = null;
+
+// Start a new game
+function newLevel() {
+    location.reload();
+}
 
 // Replays the game from the first state of board
 function replayLevel() {
@@ -82,13 +87,30 @@ function setFirstGameState() {
     );
 }
 
-// Adding event listeners to buttons
-function handleEventListeners() {
+// Adding event listeners
+function handleEventListeners(diagonalMove) {
     document.getElementById("buttonUp").addEventListener('click', movePlayerUp);
     document.getElementById("buttonDown").addEventListener('click', movePlayerDown);
     document.getElementById("buttonRight").addEventListener('click', movePlayerRight);
     document.getElementById("buttonLeft").addEventListener('click', movePlayerLeft);
+
+    document.getElementById("diagonalExtraButton").addEventListener('click', diagonalExtra);
+    document.getElementById("plusAreaExtraButton").addEventListener('click', plusAreaExtra);
+
+    if (diagonalMove) {
+        document.getElementById("buttonUp2").addEventListener('click', movePlayerUp);
+        document.getElementById("buttonDown2").addEventListener('click', movePlayerDown);
+        document.getElementById("buttonRight2").addEventListener('click', movePlayerRight);
+        document.getElementById("buttonLeft2").addEventListener('click', movePlayerLeft);
+        
+        document.getElementById("buttonUpLeft").addEventListener('click', movePlayerUpLeft);
+        document.getElementById("buttonUpRight").addEventListener('click', movePlayerUpRight);
+        document.getElementById("buttonDownLeft").addEventListener('click', movePlayerDownLeft);
+        document.getElementById("buttonDownRight").addEventListener('click', movePlayerDownRight);
+    }
+
     document.getElementById("resetButton").addEventListener('click', replayLevel);
+    document.getElementById("newLevelButton").addEventListener('click', newLevel);
 }
 
 // Create player
@@ -128,13 +150,13 @@ function setStartingCell(cell) {
     totalFruits += cell.numberOfFruits;
     cell.numberOfFruits = 0;
 
-    fruitDisplay.style.display = 'unset';
+    fruitDisplay.style.display = 'flex';
     fruitDisplay.textContent = `Begyűjtött gyümölcsök: ${totalFruits}`;
-    stepsDisplay.style.display = 'unset';
+    stepsDisplay.style.visibility = 'visible';
     stepsDisplay.textContent = `Hátralévő lépések: ${remainingSteps}`;
 
-    const buttonContainer = document.querySelector('.buttonContainer');
-    buttonContainer.style.display = 'grid';
+    document.getElementsByClassName("buttonContainer")[0].style.visibility = "visible";
+    document.getElementsByClassName("extraContainer")[0].style.visibility = "visible";
 }
 
 // Generating game matrix
@@ -199,6 +221,25 @@ function updateCells(currentCell, newCell) {
     newCell.divElement.replaceChild(player, newCell.divElement.firstChild);
 }
 
+// Extra for larger pick radius
+function plusAreaExtra() {
+    console.log("Not implemented");
+}
+
+// Extra for diagonal movement
+let diagonalMovementFlag = false;
+function diagonalExtra() {
+    document.getElementsByClassName("diagonalButtonContainer")[0].style.display = "flex";
+    document.getElementsByClassName("buttonContainer")[0].style.display = "none";
+
+    handleEventListeners(true);
+}
+
+function normalMovement() {
+    document.getElementsByClassName("diagonalButtonContainer")[0].style.display = "none";
+    document.getElementsByClassName("buttonContainer")[0].style.display = "flex";
+}
+
 // Moving player up
 function movePlayerUp() {
     const currentCell = findPlayer();
@@ -249,4 +290,64 @@ function movePlayerLeft() {
             }
         })
     })
+}
+
+// Moving player up-left
+function movePlayerUpLeft() {
+    const currentCell = findPlayer();
+    if (currentCell.row > 0 && currentCell.column > 0 && remainingSteps > 0) {
+        const newCell = gameMatrix[currentCell.row - 1][currentCell.column - 1];
+        remainingSteps--;
+        updateCells(currentCell, newCell);
+
+        normalMovement();
+    }
+    else {
+        alert("Helytelen lépés!");
+    }
+}
+
+// Moving player up-right
+function movePlayerUpRight() {
+    const currentCell = findPlayer();
+    if (currentCell.row > 0 && currentCell.column < gameMatrix[0].length - 1 && remainingSteps > 0) {
+        const newCell = gameMatrix[currentCell.row - 1][currentCell.column + 1];
+        remainingSteps--;
+        updateCells(currentCell, newCell);
+
+        normalMovement();
+    }
+    else {
+        alert("Helytelen lépés!");
+    }
+}
+
+// Moving player down-left
+function movePlayerDownLeft() {
+    const currentCell = findPlayer();
+    if (currentCell.row < gameMatrix.length - 1 && currentCell.column > 0 && remainingSteps > 0) {
+        const newCell = gameMatrix[currentCell.row + 1][currentCell.column - 1];
+        remainingSteps--;
+        updateCells(currentCell, newCell);
+
+        normalMovement();
+    }
+    else {
+        alert("Helytelen lépés!");
+    }
+}
+
+// Moving player down-right
+function movePlayerDownRight() {
+    const currentCell = findPlayer();
+    if (currentCell.row < gameMatrix.length - 1 && currentCell.column < gameMatrix[0].length - 1 && remainingSteps > 0) {
+        const newCell = gameMatrix[currentCell.row + 1][currentCell.column + 1];
+        remainingSteps--;
+        updateCells(currentCell, newCell);
+
+        normalMovement();
+    }
+    else {
+        alert("Helytelen lépés!");
+    }
 }
