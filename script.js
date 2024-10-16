@@ -227,7 +227,6 @@ function plusAreaExtra() {
 }
 
 // Extra for diagonal movement
-let diagonalMovementFlag = false;
 function diagonalExtra() {
     document.getElementsByClassName("diagonalButtonContainer")[0].style.display = "flex";
     document.getElementsByClassName("buttonContainer")[0].style.display = "none";
