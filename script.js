@@ -55,6 +55,8 @@ function replayLevel() {
     remainingSteps = stepsLimit;
     totalFruits = 0;
 
+    document.getElementById("diagonalExtraButton").disabled = false;
+
     gameMatrix = firstGameMatrix.map(row =>
         row.map(cell =>
             new gridCell(cell.row, cell.column, cell.isPlayerCell, cell.numberOfFruits)
@@ -95,7 +97,7 @@ function handleEventListeners(diagonalMove) {
     document.getElementById("buttonLeft").addEventListener('click', movePlayerLeft);
 
     document.getElementById("diagonalExtraButton").addEventListener('click', diagonalExtra);
-    document.getElementById("plusAreaExtraButton").addEventListener('click', plusAreaExtra);
+    // document.getElementById("plusAreaExtraButton").addEventListener('click', plusAreaExtra);
 
     if (diagonalMove) {
         document.getElementById("buttonUp2").addEventListener('click', movePlayerUp);
@@ -235,6 +237,8 @@ function diagonalExtra() {
 }
 
 function normalMovement() {
+    document.getElementById("diagonalExtraButton").disabled = true;
+
     document.getElementsByClassName("diagonalButtonContainer")[0].style.display = "none";
     document.getElementsByClassName("buttonContainer")[0].style.display = "flex";
 }
